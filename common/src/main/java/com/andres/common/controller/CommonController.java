@@ -1,5 +1,6 @@
 package com.andres.common.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,8 @@ import java.util.Optional;
 
 public class CommonController<E, S extends ICommonService<E>> {
 
-    protected S service;
+	@Autowired
+    public S service;
 
     @GetMapping
     public ResponseEntity<?> getAll(){
@@ -37,6 +39,11 @@ public class CommonController<E, S extends ICommonService<E>> {
    
     @DeleteMapping("/{id}")
     public ResponseEntity<?> save(@PathVariable Long id){
+    	Optional<E> data = service.findById(id);
+
+        if (data.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
